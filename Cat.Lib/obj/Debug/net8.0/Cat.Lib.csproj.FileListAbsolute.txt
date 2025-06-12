@@ -1,0 +1,11 @@
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/bin/Debug/net8.0/Cat.Lib.deps.json
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/bin/Debug/net8.0/Cat.Lib.dll
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/bin/Debug/net8.0/Cat.Lib.pdb
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/Cat.Lib.GeneratedMSBuildEditorConfig.editorconfig
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/Cat.Lib.AssemblyInfoInputs.cache
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/Cat.Lib.AssemblyInfo.cs
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/Cat.Lib.csproj.CoreCompileInputs.cache
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/Cat.Lib.dll
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/refint/Cat.Lib.dll
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/Cat.Lib.pdb
+/Users/yosephehab/Code/cat-poc/CatPoc/Cat.Lib/obj/Debug/net8.0/ref/Cat.Lib.dll
