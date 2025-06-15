@@ -34,7 +34,7 @@ public class IRTAdaptiveAssessment(List<Question> questionBank) : IAdaptiveAsses
         bool isCorrect = questionBank.First(q => q.Id == questionId).Options.First(o => string.Equals(o.Text, answer, StringComparison.OrdinalIgnoreCase)).IsCorrect;
         var question = questionBank.First(q => q.Id == questionId);
         answeredQuestions.Add((question, isCorrect));
-        UpdateAbilityEstimate();
+        UpdateAbilityEstimate3PL();
     }
 
     public bool ShouldEndSession() => answeredQuestions.Count >= maxQuestions;
@@ -43,7 +43,7 @@ public class IRTAdaptiveAssessment(List<Question> questionBank) : IAdaptiveAsses
 
     public AssessmentResult EndSession() => new(candidateId, MapDifficultyToSkillLevel(abilityEstimate, true), answeredQuestions.Count, DateTime.UtcNow - startTime);
 
-    private void UpdateAbilityEstimate()
+    private void UpdateAbilityEstimate1PL()
     {
         // Use Newton-Raphson update to estimate theta (ability)
         double theta = abilityEstimate;
@@ -69,6 +69,51 @@ public class IRTAdaptiveAssessment(List<Question> questionBank) : IAdaptiveAsses
         }
 
         abilityEstimate = Math.Max(-3.0, Math.Min(3.0, theta)); // clamp to a reasonable range
+    }
+
+    private void UpdateAbilityEstimate3PL()
+    {
+        double theta = abilityEstimate;
+
+        for (int iter = 0; iter < 5; iter++) // Newton-Raphson loop
+        {
+            double likelihood = 0.0;
+            double information = 0.0;
+
+            foreach (var (question, isCorrect) in answeredQuestions)
+            {
+                double b = MapSkillLevelToDifficulty(question.SkillLevel);
+                double a = question.Discrimination; // requires Discrimination in model
+                double c = question.Guessing;       // requires Guessing in model
+
+                double expTerm = Math.Exp(-a * (theta - b));
+                double p = c + (1 - c) / (1 + expTerm); // 3PL probability
+
+                double dP = a * (1 - c) * expTerm / Math.Pow(1 + expTerm, 2); // derivative of P(θ)
+
+                // Guard against log(0) and division by zero
+                p = Math.Clamp(p, 1e-6, 1 - 1e-6);
+
+                // Gradient (1st derivative of log-likelihood)
+                likelihood += ((isCorrect ? 1.0 : 0.0) - p) * dP / (p * (1 - p));
+
+                // Fisher Information
+                information += Math.Pow(dP, 2) / (p * (1 - p));
+            }
+
+            // Update ability estimate
+            if (information > 0)
+            {
+                double delta = likelihood / information;
+                theta += delta;
+
+                if (Math.Abs(delta) < 0.01)
+                    break; // converged
+            }
+        }
+
+        // Clamp ability estimate to a reasonable range
+        abilityEstimate = Math.Clamp(theta, -3.0, 3.0);
     }
 
     private static double MapSkillLevelToDifficulty(int skillLevel)
